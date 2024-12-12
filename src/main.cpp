@@ -6,6 +6,7 @@
 #include <vector>
 
 void function_type(std::string command_input);
+void function_execute(std::string command, std::string command_input);
 std::vector<std::string> split(std::string s, std::string delimeter);
 
 int main() {
@@ -29,7 +30,7 @@ int main() {
             function_type(command_input);
         }
         else {
-            std::cout << input << ": command not found\n";
+            function_execute(command, command_input);
         }
     }
 }
@@ -54,6 +55,20 @@ void function_type(std::string command_input)
     std::cout << command_input << ": not found\n";
 }
 
+void function_execute(std::string command, std::string command_input)
+{
+    std::string path = std::getenv("PATH");
+    std::vector<std::string> split_paths = split(path, ":");
+    for(auto it = split_paths.begin(); it != split_paths.end(); ++it) {
+        for (const auto & entry : std::filesystem::directory_iterator(*it)) {
+            if (command == entry.path().filename().string()) {
+                std::system((command + " " + command_input).c_str());
+                return;
+            }
+        }
+    }
+    std::cout << command << ": command not found\n";
+}
 std::vector<std::string> split(std::string s, std::string delimeter)
 {
     std::vector<std::string> split_strings;
