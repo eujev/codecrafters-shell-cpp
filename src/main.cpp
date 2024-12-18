@@ -74,7 +74,11 @@ void function_pwd()
 void function_cd(std::string command_input)
 {
     const std::filesystem::path destination_path = command_input;
-    if (std::filesystem::exists(destination_path)) {
+    if (destination_path.string() == "~") {
+        std::string home_dir = std::getenv("HOME");
+        std::filesystem::current_path(home_dir);
+    }
+    else if (std::filesystem::exists(destination_path)) {
         std::filesystem::current_path(destination_path);
     }
     else {
