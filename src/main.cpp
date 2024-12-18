@@ -8,6 +8,7 @@
 void function_type(std::string command_input);
 void function_execute(std::string command, std::string command_input);
 void function_pwd();
+void function_cd(std::string command_input);
 std::vector<std::string> split(std::string s, std::string delimeter);
 
 int main() {
@@ -33,6 +34,9 @@ int main() {
         else if (command == "pwd") {
             function_pwd();
         }
+        else if (command == "cd") {
+            function_cd(command_input);
+        }
         else {
             function_execute(command, command_input);
         }
@@ -41,13 +45,14 @@ int main() {
 
 void function_type(std::string command_input)
 {
-    std::string path = std::getenv("PATH");
-    std::vector<std::string> split_paths = split(path, ":");
-
     if (command_input == "echo" || command_input == "type" || command_input == "exit" || command_input == "pwd") {
         std::cout << command_input << " is a shell builtin\n";
         return;
     }
+
+    std::string path = std::getenv("PATH");
+    std::vector<std::string> split_paths = split(path, ":");
+    
     for(auto it = split_paths.begin(); it != split_paths.end(); ++it) {
         for (const auto & entry : std::filesystem::directory_iterator(*it)) {
             if (command_input == entry.path().filename().string()) {
@@ -59,9 +64,22 @@ void function_type(std::string command_input)
     std::cout << command_input << ": not found\n";
 }
 
+
 void function_pwd()
 {
     std::cout << std::filesystem::current_path().string() << "\n";
+}
+
+
+void function_cd(std::string command_input)
+{
+    const std::filesystem::path destination_path = command_input;
+    if (std::filesystem::exists(destination_path)) {
+        std::filesystem::current_path(destination_path);
+    }
+    else {
+        std::cout << "cd: " << destination_path.string() << ": No such file or directory\n";
+    }
 }
 
 void function_execute(std::string command, std::string command_input)
@@ -78,6 +96,8 @@ void function_execute(std::string command, std::string command_input)
     }
     std::cout << command << ": command not found\n";
 }
+
+
 std::vector<std::string> split(std::string s, std::string delimeter)
 {
     std::vector<std::string> split_strings;
