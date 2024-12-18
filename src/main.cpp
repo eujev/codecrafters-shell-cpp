@@ -7,6 +7,7 @@
 
 void function_type(std::string command_input);
 void function_execute(std::string command, std::string command_input);
+void function_pwd();
 std::vector<std::string> split(std::string s, std::string delimeter);
 
 int main() {
@@ -29,6 +30,9 @@ int main() {
         else if (command == "type") {
             function_type(command_input);
         }
+        else if (command == "pwd") {
+            function_pwd();
+        }
         else {
             function_execute(command, command_input);
         }
@@ -40,7 +44,7 @@ void function_type(std::string command_input)
     std::string path = std::getenv("PATH");
     std::vector<std::string> split_paths = split(path, ":");
 
-    if (command_input == "echo" || command_input == "type" || command_input == "exit") {
+    if (command_input == "echo" || command_input == "type" || command_input == "exit" || command_input == "pwd") {
         std::cout << command_input << " is a shell builtin\n";
         return;
     }
@@ -53,6 +57,11 @@ void function_type(std::string command_input)
         }
     }
     std::cout << command_input << ": not found\n";
+}
+
+void function_pwd()
+{
+    std::cout << std::filesystem::current_path().string() << "\n";
 }
 
 void function_execute(std::string command, std::string command_input)
