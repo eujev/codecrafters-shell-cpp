@@ -9,6 +9,7 @@ void function_type(std::string command_input);
 void function_execute(std::string command, std::string command_input);
 void function_pwd();
 void function_cd(std::string command_input);
+std::string check_quotes(std::string command_input);
 std::vector<std::string> split(std::string s, std::string delimeter);
 
 int main() {
@@ -26,6 +27,7 @@ int main() {
         std::string command = input.substr(0, input.find(" "));
         std::string command_input = input.substr(input.find(" ") + 1, input.length()); 
         if (command == "echo") {
+            command_input = check_quotes(command_input);
             std::cout << command_input << "\n";
         }
         else if (command == "type") {
@@ -101,6 +103,38 @@ void function_execute(std::string command, std::string command_input)
     std::cout << command << ": command not found\n";
 }
 
+std::string check_quotes(std::string command_input)
+{
+    std::string s = command_input;
+    std::string result{};
+    auto it = s.begin();
+    while (it != s.end()) {
+        if (*it == '\'') {
+            ++it;
+            while (*it != '\'' && (it+1) != s.end()) {
+                //std::cout << *it << std::endl;
+                result += *it;
+                ++it;
+            }
+            ++it;
+        }
+        else if (*it == ' ') {
+            while (*(it+1) == ' ') {
+            ++it;
+            }
+            result += *it;
+            it++;
+        }
+        else {
+            result += *it;
+            ++it;
+        }
+            //auto pos = s.substr(it, s.end()).find("\'");
+    }
+    //std::string results = command_input;
+    //command_input.erase(std::remove(command_input.begin(), command_input.end(), '\''), command_input.end());
+    return result;
+}
 
 std::vector<std::string> split(std::string s, std::string delimeter)
 {
