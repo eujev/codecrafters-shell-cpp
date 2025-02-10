@@ -118,6 +118,15 @@ std::string check_quotes(std::string command_input)
             }
             ++it;
         }
+        else if (*it == '\"') {
+            ++it;
+            while (*it != '\"' && (it+1) != s.end()) {
+                //std::cout << *it << std::endl;
+                result += *it;
+                ++it;
+            }
+            ++it;
+        }
         else if (*it == ' ') {
             while (*(it+1) == ' ') {
             ++it;
