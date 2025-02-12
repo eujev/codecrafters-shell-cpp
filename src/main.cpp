@@ -112,7 +112,6 @@ std::string check_quotes(std::string command_input)
         if (*it == '\'') {
             ++it;
             while (*it != '\'' && (it+1) != s.end()) {
-                //std::cout << *it << std::endl;
                 result += *it;
                 ++it;
             }
@@ -121,7 +120,15 @@ std::string check_quotes(std::string command_input)
         else if (*it == '\"') {
             ++it;
             while (*it != '\"' && (it+1) != s.end()) {
-                //std::cout << *it << std::endl;
+                if (*it == '\\') {
+                    if (*(it+1) == '\\' || *(it+1) == '$') {
+                        ++it;
+                    }
+                    else if (*(it+1) == '\"') {
+                        result += *++it;
+                        ++it;
+                    }
+                }
                 result += *it;
                 ++it;
             }
@@ -142,10 +149,7 @@ std::string check_quotes(std::string command_input)
             result += *it;
             ++it;
         }
-            //auto pos = s.substr(it, s.end()).find("\'");
     }
-    //std::string results = command_input;
-    //command_input.erase(std::remove(command_input.begin(), command_input.end(), '\''), command_input.end());
     return result;
 }
 
