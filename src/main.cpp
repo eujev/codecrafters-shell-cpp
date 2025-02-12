@@ -134,6 +134,10 @@ std::string check_quotes(std::string command_input)
             result += *it;
             it++;
         }
+        else if (*it == '\\') {
+            result += *++it;
+            ++it;
+        }
         else {
             result += *it;
             ++it;
