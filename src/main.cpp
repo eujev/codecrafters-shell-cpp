@@ -24,8 +24,19 @@ int main() {
         if (input == "exit 0") {
             return 0;
         }
-        std::string command = input.substr(0, input.find(" "));
-        std::string command_input = input.substr(input.find(" ") + 1, input.length()); 
+        int seperator{0};
+        if (input.front() == '\'' || input.front() == '\"') {
+            char c = input.front();
+            seperator = input.find(c, 1)+1;
+        }
+        else {
+            seperator = input.find(" ");
+        }
+        std::string command = input.substr(0, seperator);
+        if (command.front() == '\'' || command.front() == '\"') {
+            command = "cat";
+        }
+        std::string command_input = input.substr(seperator + 1, input.length()); 
         if (command == "echo") {
             command_input = check_quotes(command_input);
             std::cout << command_input << "\n";
