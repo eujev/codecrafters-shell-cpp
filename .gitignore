@@ -46,4 +46,5 @@ CTestTestfile.cmake
 _deps
 
 build/
+build_local/
 vcpkg_installed
