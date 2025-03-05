@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+void handle_command(std::string command, std::string command_input);
 void function_type(std::string command_input);
 void function_execute(std::string command, std::string command_input);
 void function_pwd();
@@ -37,24 +38,31 @@ int main() {
             command = "cat";
         }
         std::string command_input = input.substr(seperator + 1, input.length()); 
-        if (command == "echo") {
-            command_input = check_quotes(command_input);
-            std::cout << command_input << "\n";
-        }
-        else if (command == "type") {
-            function_type(command_input);
-        }
-        else if (command == "pwd") {
-            function_pwd();
-        }
-        else if (command == "cd") {
-            function_cd(command_input);
-        }
-        else {
-            function_execute(command, command_input);
-        }
+        handle_command(command, command_input);
     }
 }
+
+
+void handle_command(std::string command, std::string command_input)
+{
+    if (command == "echo") {
+        command_input = check_quotes(command_input);
+        std::cout << command_input << "\n";
+    }
+    else if (command == "type") {
+        function_type(command_input);
+    }
+    else if (command == "pwd") {
+        function_pwd();
+    }
+    else if (command == "cd") {
+        function_cd(command_input);
+    }
+    else {
+        function_execute(command, command_input);
+    }
+}
+
 
 void function_type(std::string command_input)
 {
