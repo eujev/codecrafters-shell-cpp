@@ -5,12 +5,13 @@
 #include <string>
 #include <vector>
 
-void handle_command(std::string command, std::string command_input);
-void function_type(std::string command_input);
-void function_execute(std::string command, std::string command_input);
+void handle_command(std::string command, std::string command_args);
+void function_type(std::string command_args);
+void function_execute(std::string command, std::string command_args);
 void function_pwd();
-void function_cd(std::string command_input);
-std::string check_quotes(std::string command_input);
+void function_cd(std::string command_args);
+std::string get_path(std::string command);
+std::string check_quotes(std::string command_args);
 std::vector<std::string> split(std::string s, std::string delimeter);
 
 int main() {
@@ -37,37 +38,37 @@ int main() {
         if (command.front() == '\'' || command.front() == '\"') {
             command = "cat";
         }
-        std::string command_input = input.substr(seperator + 1, input.length()); 
-        handle_command(command, command_input);
+        std::string command_args = input.substr(seperator + 1, input.length()); 
+        handle_command(command, command_args);
     }
 }
 
 
-void handle_command(std::string command, std::string command_input)
+void handle_command(std::string command, std::string command_args)
 {
     if (command == "echo") {
-        command_input = check_quotes(command_input);
-        std::cout << command_input << "\n";
+        command_args = check_quotes(command_args);
+        std::cout << command_args << "\n";
     }
     else if (command == "type") {
-        function_type(command_input);
+        function_type(command_args);
     }
     else if (command == "pwd") {
         function_pwd();
     }
     else if (command == "cd") {
-        function_cd(command_input);
+        function_cd(command_args);
     }
     else {
-        function_execute(command, command_input);
+        function_execute(command, command_args);
     }
 }
 
 
-void function_type(std::string command_input)
+void function_type(std::string command_args)
 {
-    if (command_input == "echo" || command_input == "type" || command_input == "exit" || command_input == "pwd") {
-        std::cout << command_input << " is a shell builtin\n";
+    if (command_args == "echo" || command_args == "type" || command_args == "exit" || command_args == "pwd") {
+        std::cout << command_args << " is a shell builtin\n";
         return;
     }
 
@@ -76,13 +77,13 @@ void function_type(std::string command_input)
     
     for(auto it = split_paths.begin(); it != split_paths.end(); ++it) {
         for (const auto & entry : std::filesystem::directory_iterator(*it)) {
-            if (command_input == entry.path().filename().string()) {
-                std::cout << command_input << " is " << entry.path().string() << "\n";
+            if (command_args == entry.path().filename().string()) {
+                std::cout << command_args << " is " << entry.path().string() << "\n";
                 return;
             }
         }
     }
-    std::cout << command_input << ": not found\n";
+    std::cout << command_args << ": not found\n";
 }
 
 
@@ -92,9 +93,9 @@ void function_pwd()
 }
 
 
-void function_cd(std::string command_input)
+void function_cd(std::string command_args)
 {
-    const std::filesystem::path destination_path = command_input;
+    const std::filesystem::path destination_path = command_args;
     if (destination_path.string() == "~") {
         std::string home_dir = std::getenv("HOME");
         std::filesystem::current_path(home_dir);
@@ -107,14 +108,14 @@ void function_cd(std::string command_input)
     }
 }
 
-void function_execute(std::string command, std::string command_input)
+void function_execute(std::string command, std::string command_args)
 {
     std::string path = std::getenv("PATH");
     std::vector<std::string> split_paths = split(path, ":");
     for(auto it = split_paths.begin(); it != split_paths.end(); ++it) {
         for (const auto & entry : std::filesystem::directory_iterator(*it)) {
             if (command == entry.path().filename().string()) {
-                std::system((command + " " + command_input).c_str());
+                std::system((command + " " + command_args).c_str());
                 return;
             }
         }
@@ -122,9 +123,9 @@ void function_execute(std::string command, std::string command_input)
     std::cout << command << ": command not found\n";
 }
 
-std::string check_quotes(std::string command_input)
+std::string check_quotes(std::string command_args)
 {
-    std::string s = command_input;
+    std::string s = command_args;
     std::string result{};
     auto it = s.begin();
     while (it != s.end()) {
