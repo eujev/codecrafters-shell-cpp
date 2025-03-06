@@ -1,9 +1,7 @@
-#include <cstddef>
 #include <cstdlib>
 #include <filesystem>
 #include <iostream>
 #include <string>
-#include <vector>
 
 void handle_command(std::string command, std::string command_args);
 void function_type(std::string command_args);
@@ -12,7 +10,6 @@ void function_pwd();
 void function_cd(std::string command_args);
 std::string get_path(std::string command);
 std::string check_quotes(std::string command_args);
-std::vector<std::string> split(std::string s, std::string delimeter);
 
 int main() {
     // Flush after every std::cout / std:cerr
@@ -182,19 +179,4 @@ std::string check_quotes(std::string command_args)
         }
     }
     return result;
-}
-
-std::vector<std::string> split(std::string s, std::string delimeter)
-{
-    std::vector<std::string> split_strings;
-    size_t pos = 0;
-    std::string token;
-    while((pos = s.find(delimeter)) != std::string::npos) {
-        token = s.substr(0, pos);
-        split_strings.push_back(token);
-        s.erase(0, pos + delimeter.length());
-    }
-    split_strings.push_back(s);
-
-    return split_strings;
 }
