@@ -107,17 +107,13 @@ void function_cd(std::string command_args)
 
 void function_execute(std::string command, std::string command_args)
 {
-    std::string path = std::getenv("PATH");
-    std::vector<std::string> split_paths = split(path, ":");
-    for(auto it = split_paths.begin(); it != split_paths.end(); ++it) {
-        for (const auto & entry : std::filesystem::directory_iterator(*it)) {
-            if (command == entry.path().filename().string()) {
-                std::system((command + " " + command_args).c_str());
-                return;
-            }
-        }
+    std::string path = get_path(command);
+    if(path.empty()) {
+        std::cout << command << ": command not found\n";
     }
-    std::cout << command << ": command not found\n";
+    else {
+        std::system((command + " " + command_args).c_str());
+    }
 }
 
 
@@ -125,7 +121,6 @@ std::string get_path(std::string command)
 {
     std::string path_env = std::getenv("PATH");
     std::stringstream path_env_stream(path_env);
-    //std::vector<std::string> split_paths = split(path_env, ":");
     std::string path;
     while (!path_env_stream.eof()) {
         std::getline(path_env_stream, path, ':');
@@ -135,18 +130,9 @@ std::string get_path(std::string command)
             return abs_path;
         }
     }
-    //for(const auto& path_i : split_paths) {
-    //    std::cout << path_i << " ";
-    //    for (const auto& entry : std::filesystem::directory_iterator(path_i)) {
-    //        if (std::filesystem::exists(entry.path().filename().string())) {
-    //            std::cout << '\n' << entry.path().filename().string() << '\n';
-    //            return entry.path().string();
-    //        }
-    //    }
-    //}
     return "";
-    
 }
+
 
 std::string check_quotes(std::string command_args)
 {
