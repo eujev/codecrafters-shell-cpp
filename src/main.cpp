@@ -72,18 +72,14 @@ void function_type(std::string command_args)
         return;
     }
 
-    std::string path = std::getenv("PATH");
-    std::vector<std::string> split_paths = split(path, ":");
+    std::string path = get_path(command_args);
     
-    for(auto it = split_paths.begin(); it != split_paths.end(); ++it) {
-        for (const auto & entry : std::filesystem::directory_iterator(*it)) {
-            if (command_args == entry.path().filename().string()) {
-                std::cout << command_args << " is " << entry.path().string() << "\n";
-                return;
-            }
-        }
+    if (path.empty()) {
+        std::cout << command_args << ": not found\n";
     }
-    std::cout << command_args << ": not found\n";
+    else {
+        std::cout << command_args << " is " << path << "\n";
+    }
 }
 
 
@@ -108,6 +104,7 @@ void function_cd(std::string command_args)
     }
 }
 
+
 void function_execute(std::string command, std::string command_args)
 {
     std::string path = std::getenv("PATH");
@@ -121,6 +118,34 @@ void function_execute(std::string command, std::string command_args)
         }
     }
     std::cout << command << ": command not found\n";
+}
+
+
+std::string get_path(std::string command)
+{
+    std::string path_env = std::getenv("PATH");
+    std::stringstream path_env_stream(path_env);
+    //std::vector<std::string> split_paths = split(path_env, ":");
+    std::string path;
+    while (!path_env_stream.eof()) {
+        std::getline(path_env_stream, path, ':');
+        std::string abs_path = path + '/' + command;
+
+        if(std::filesystem::exists(abs_path)) {
+            return abs_path;
+        }
+    }
+    //for(const auto& path_i : split_paths) {
+    //    std::cout << path_i << " ";
+    //    for (const auto& entry : std::filesystem::directory_iterator(path_i)) {
+    //        if (std::filesystem::exists(entry.path().filename().string())) {
+    //            std::cout << '\n' << entry.path().filename().string() << '\n';
+    //            return entry.path().string();
+    //        }
+    //    }
+    //}
+    return "";
+    
 }
 
 std::string check_quotes(std::string command_args)
