@@ -78,6 +78,11 @@ void function_echo(std::string command_args)
             new_file << command_args.substr(0, it-1) << '\n';
             new_file.close();
         }
+        else if (command_args.at(it-1) == '2') {
+            std::ofstream new_file(command_args.substr(it+2,command_args.length()));
+            std::cout << command_args.substr(0, it-1) << "\n";
+            new_file.close();
+        }
         else {
             std::ofstream new_file(command_args.substr(it+2,command_args.length()));
             new_file << command_args.substr(0, it) << '\n';
