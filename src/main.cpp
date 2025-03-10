@@ -1,7 +1,9 @@
+#include <algorithm>
 #include <cstdlib>
 #include <filesystem>
 #include <iostream>
 #include <string>
+#include <vector>
 
 void handle_command(std::string command, std::string command_args);
 void function_type(std::string command_args);
@@ -10,6 +12,9 @@ void function_pwd();
 void function_cd(std::string command_args);
 std::string get_path(std::string command);
 std::string check_quotes(std::string command_args);
+
+
+std::vector<std::string> builtin_commands{"echo", "type", "exit", "pwd", "cd"};
 
 int main() {
     // Flush after every std::cout / std:cerr
@@ -64,7 +69,7 @@ void handle_command(std::string command, std::string command_args)
 
 void function_type(std::string command_args)
 {
-    if (command_args == "echo" || command_args == "type" || command_args == "exit" || command_args == "pwd") {
+    if (std::find(builtin_commands.begin(), builtin_commands.end(), command_args) != builtin_commands.end()) {
         std::cout << command_args << " is a shell builtin\n";
         return;
     }
