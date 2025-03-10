@@ -1,11 +1,13 @@
 #include <algorithm>
 #include <cstdlib>
 #include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
 
 void handle_command(std::string command, std::string command_args);
+void function_echo(std::string command_args);
 void function_type(std::string command_args);
 void function_execute(std::string command, std::string command_args);
 void function_pwd();
@@ -49,8 +51,7 @@ int main() {
 void handle_command(std::string command, std::string command_args)
 {
     if (command == "echo") {
-        command_args = check_quotes(command_args);
-        std::cout << command_args << "\n";
+        function_echo(command_args);
     }
     else if (command == "type") {
         function_type(command_args);
@@ -63,6 +64,28 @@ void handle_command(std::string command, std::string command_args)
     }
     else {
         function_execute(command, command_args);
+    }
+}
+
+
+void function_echo(std::string command_args)
+{
+    command_args = check_quotes(command_args);
+    auto it = command_args.find(">");
+    if (it != command_args.npos) {
+        if (command_args.at(it-1) == '1') {
+            std::ofstream new_file(command_args.substr(it+2,command_args.length()));
+            new_file << command_args.substr(0, it-1) << '\n';
+            new_file.close();
+        }
+        else {
+            std::ofstream new_file(command_args.substr(it+2,command_args.length()));
+            new_file << command_args.substr(0, it) << '\n';
+            new_file.close();
+        }
+    }
+    else {
+        std::cout << command_args << "\n";
     }
 }
 
