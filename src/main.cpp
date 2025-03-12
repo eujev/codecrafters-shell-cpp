@@ -74,19 +74,43 @@ void function_echo(std::string command_args)
     auto it = command_args.find(">");
     if (it != command_args.npos) {
         if (command_args.at(it-1) == '1') {
-            std::ofstream new_file(command_args.substr(it+2,command_args.length()));
-            new_file << command_args.substr(0, it-1) << '\n';
-            new_file.close();
+            if (command_args.at(it+1) == '>') {
+                std::ofstream append_file;
+                append_file.open(command_args.substr(it+3,command_args.length()), std::ios::app);
+                append_file << command_args.substr(0, it-1) << '\n';
+                append_file.close();
+            }
+            else {
+                std::ofstream new_file(command_args.substr(it+2,command_args.length()));
+                new_file << command_args.substr(0, it-1) << '\n';
+                new_file.close();
+            }
         }
         else if (command_args.at(it-1) == '2') {
-            std::ofstream new_file(command_args.substr(it+2,command_args.length()));
-            std::cout << command_args.substr(0, it-1) << "\n";
-            new_file.close();
+            if (command_args.at(it+1) == '>') {
+                std::ofstream append_file;
+                append_file.open(command_args.substr(it+3,command_args.length()), std::ios::app);
+                std::cout << command_args.substr(0, it-1) << '\n';
+                append_file.close();
+            }
+            else {
+                std::ofstream new_file(command_args.substr(it+2,command_args.length()));
+                std::cout << command_args.substr(0, it-1) << "\n";
+                new_file.close();
+            }
         }
         else {
-            std::ofstream new_file(command_args.substr(it+2,command_args.length()));
-            new_file << command_args.substr(0, it) << '\n';
-            new_file.close();
+            if (command_args.at(it+1) == '>') {
+                std::ofstream append_file;
+                append_file.open(command_args.substr(it+3,command_args.length()), std::ios::app);
+                append_file << command_args.substr(0, it) << '\n';
+                append_file.close();
+            }
+            else {
+                std::ofstream new_file(command_args.substr(it+2,command_args.length()));
+                new_file << command_args.substr(0, it) << '\n';
+                new_file.close();
+            }
         }
     }
     else {
