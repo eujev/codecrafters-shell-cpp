@@ -77,7 +77,7 @@ void get_non_can_input(std::string& input)
                 std::cout << "\b \b";
             }
         }
-        else {
+        else if (c >= 32 && c < BACKSPACE_KEY) {
             std::cout << c;
             input += c;
         }
@@ -88,27 +88,17 @@ void get_non_can_input(std::string& input)
 
 void handle_tab(std::string& input)
 {
-    //std::string path = get_path(input);
-    //std::cout << path << '\n';
     for (auto builtin : builtin_commands) {
         if (builtin.starts_with(input) == true) {
             std::string to_add = builtin.substr(input.size()) + " ";
             input += to_add;
             std::cout << to_add;
+            return;
         }
     }
-    /*if (input == "ech") {
-        input+= "o ";
-        std::cout << "o ";
-    }
-    else if (input == "exi") {
-        input+= "t ";
-        std::cout << "t ";
-    }
-    */
-    //else {
-    //std::cout << '\a';
-    //}
+    //std::string path = get_path(input);
+    //std::cout << path << '\n';
+    std::cout << '\a';
 }
 
 
