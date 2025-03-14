@@ -88,7 +88,16 @@ void get_non_can_input(std::string& input)
 
 void handle_tab(std::string& input)
 {
-    if (input == "ech") {
+    //std::string path = get_path(input);
+    //std::cout << path << '\n';
+    for (auto builtin : builtin_commands) {
+        if (builtin.starts_with(input) == true) {
+            std::string to_add = builtin.substr(input.size()) + " ";
+            input += to_add;
+            std::cout << to_add;
+        }
+    }
+    /*if (input == "ech") {
         input+= "o ";
         std::cout << "o ";
     }
@@ -96,9 +105,10 @@ void handle_tab(std::string& input)
         input+= "t ";
         std::cout << "t ";
     }
-    else {
-        std::cout << '\a';
-    }
+    */
+    //else {
+    //std::cout << '\a';
+    //}
 }
 
 
