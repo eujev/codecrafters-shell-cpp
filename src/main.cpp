@@ -1,11 +1,16 @@
 #include <algorithm>
+#include <cstdio>
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
+#include <termios.h>
+#include <unistd.h>
 
+void get_non_can_input(std::string& input);
+void handle_tab(std::string& input);
 void handle_command(std::string command, std::string command_args);
 void function_echo(std::string command_args);
 void function_type(std::string command_args);
@@ -14,7 +19,6 @@ void function_pwd();
 void function_cd(std::string command_args);
 std::string get_path(std::string command);
 std::string check_quotes(std::string command_args);
-
 
 std::vector<std::string> builtin_commands{"echo", "type", "exit", "pwd", "cd"};
 
@@ -26,7 +30,7 @@ int main() {
     while(true) {
         std::cout << "$ ";
         std::string input;
-        std::getline(std::cin, input);
+        get_non_can_input(input);
         if (input == "exit 0") {
             return 0;
         }
@@ -44,6 +48,53 @@ int main() {
         }
         std::string command_args = input.substr(seperator + 1, input.length()); 
         handle_command(command, command_args);
+    }
+}
+
+
+void get_non_can_input(std::string& input)
+{
+    termios new_termio, old_termio;
+    tcgetattr(STDIN_FILENO, &old_termio);
+    new_termio = old_termio;
+    new_termio.c_lflag &=~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &new_termio);
+    
+    const char BACKSPACE_KEY = 127;
+    char c;
+    while(true) {
+        c = getchar();
+        if (c == '\n') {
+            std::cout << std::endl;
+            break;
+        }
+        else if (c == '\t') {
+            handle_tab(input);
+        }
+        else if (c == BACKSPACE_KEY) {
+            if (!input.empty()) {
+                input.pop_back();
+                std::cout << "\b \b";
+            }
+        }
+        else {
+            std::cout << c;
+            input += c;
+        }
+    }
+    tcsetattr(STDIN_FILENO, TCSANOW, &old_termio);
+}
+
+
+void handle_tab(std::string& input)
+{
+    if (input == "ech") {
+        input+= "o ";
+        std::cout << "o ";
+    }
+    else if (input == "exi") {
+        input+= "t ";
+        std::cout << "t ";
     }
 }
 
