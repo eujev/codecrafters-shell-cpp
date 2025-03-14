@@ -96,6 +96,9 @@ void handle_tab(std::string& input)
         input+= "t ";
         std::cout << "t ";
     }
+    else {
+        std::cout << '\a';
+    }
 }
 
 
