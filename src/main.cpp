@@ -96,8 +96,31 @@ void handle_tab(std::string& input)
             return;
         }
     }
-    //std::string path = get_path(input);
-    //std::cout << path << '\n';
+    // Neue Funktion die unvollständigen Path sucht
+    std::string path_env = std::getenv("PATH");
+    std::stringstream path_env_stream(path_env);
+    std::string path;
+    while (!path_env_stream.eof()) {
+        std::getline(path_env_stream, path, ':');
+        for (const auto &entry : std::filesystem::directory_iterator(path)) {
+            if (entry.exists() && !entry.is_directory() && ((std::filesystem::perms::owner_exec & entry.status().permissions()) != std::filesystem::perms::none) ) {
+                auto const start_cmd = entry.path().string().find_last_of('/');
+                if (start_cmd != std::string::npos) {
+                    std::string cmd = entry.path().string().substr(start_cmd+1);
+                    if (cmd.starts_with(input) == true) {
+                        std::string to_add = cmd.substr(input.size()) + " ";
+                        input += to_add;
+                        std::cout << to_add;
+                        return;
+                    }
+                }
+            }
+        }
+    }
+    //size_t start_cmd = path.find_last_of('/');
+    //std::string cmd = path.substr(start_cmd+1);
+    //std::cout << cmd << '\n';
+    
     std::cout << '\a';
 }
 
