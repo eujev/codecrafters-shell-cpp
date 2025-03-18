@@ -10,7 +10,7 @@
 #include <unistd.h>
 
 void get_non_can_input(std::string& input);
-void handle_tab(std::string& input);
+bool handle_tab(std::string& input, bool double_tap);
 void handle_command(std::string command, std::string command_args);
 void function_echo(std::string command_args);
 void function_type(std::string command_args);
@@ -62,6 +62,7 @@ void get_non_can_input(std::string& input)
     
     const char BACKSPACE_KEY = 127;
     char c;
+    bool double_tap{false};
     while(true) {
         c = getchar();
         if (c == '\n') {
@@ -69,7 +70,7 @@ void get_non_can_input(std::string& input)
             break;
         }
         else if (c == '\t') {
-            handle_tab(input);
+            double_tap = handle_tab(input, double_tap);
         }
         else if (c == BACKSPACE_KEY) {
             if (!input.empty()) {
@@ -86,17 +87,9 @@ void get_non_can_input(std::string& input)
 }
 
 
-void handle_tab(std::string& input)
+bool handle_tab(std::string& input, bool double_tap)
 {
-    for (auto builtin : builtin_commands) {
-        if (builtin.starts_with(input) == true) {
-            std::string to_add = builtin.substr(input.size()) + " ";
-            input += to_add;
-            std::cout << to_add;
-            return;
-        }
-    }
-    // Neue Funktion die unvollständigen Path sucht
+    std::vector<std::string> all_commands{builtin_commands};
     std::string path_env = std::getenv("PATH");
     std::stringstream path_env_stream(path_env);
     std::string path;
@@ -107,21 +100,43 @@ void handle_tab(std::string& input)
                 auto const start_cmd = entry.path().string().find_last_of('/');
                 if (start_cmd != std::string::npos) {
                     std::string cmd = entry.path().string().substr(start_cmd+1);
-                    if (cmd.starts_with(input) == true) {
-                        std::string to_add = cmd.substr(input.size()) + " ";
-                        input += to_add;
-                        std::cout << to_add;
-                        return;
-                    }
+                    all_commands.push_back(cmd);
                 }
             }
         }
     }
-    //size_t start_cmd = path.find_last_of('/');
-    //std::string cmd = path.substr(start_cmd+1);
-    //std::cout << cmd << '\n';
-    
-    std::cout << '\a';
+
+    std::vector<std::string> ac_candidates;
+    for (auto command : all_commands) {
+        if (command.starts_with(input) == true) {
+            ac_candidates.push_back(command);
+            //std::string to_add = command.substr(input.size()) + " ";
+            //input += to_add;
+            //std::cout << to_add;
+            //return;
+        }
+    }
+    if (ac_candidates.empty()) {
+        std::cout << '\a';
+        return false;
+    }
+    else if (ac_candidates.size() == 1) {
+        std::string to_add = ac_candidates.at(0).substr(input.size()) + " ";
+        input += to_add;
+        std::cout << to_add;
+        return false;
+    }
+    else if (double_tap) {
+        std::cout << '\a' << '\n';
+        for (auto print_candidate : ac_candidates) {
+            std::cout << print_candidate << "  ";
+        }
+        std::cout << '\n' << input;
+        return false;
+    }
+    else {
+        return true;
+    }
 }
 
 
