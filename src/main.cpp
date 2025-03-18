@@ -52,6 +52,7 @@ int main() {
 }
 
 
+// Changes the terminal mode, so that each individual character can be handled
 void get_non_can_input(std::string& input)
 {
     termios new_termio, old_termio;
@@ -87,6 +88,8 @@ void get_non_can_input(std::string& input)
 }
 
 
+// Handles the autocompletion when pressing <TAB>.
+// @return if it was double tapped.
 bool handle_tab(std::string& input, bool double_tap)
 {
     std::vector<std::string> all_commands{builtin_commands};
@@ -100,7 +103,7 @@ bool handle_tab(std::string& input, bool double_tap)
                 auto const start_cmd = entry.path().string().find_last_of('/');
                 if (start_cmd != std::string::npos) {
                     std::string cmd = entry.path().string().substr(start_cmd+1);
-                    // Try to remove the find and if condition for it 
+                    // TODO: Try to remove the find and if condition for 'it' 
                     auto it = std::find(all_commands.begin(), all_commands.end(), cmd);
                     if (it == all_commands.end()) {
                         all_commands.push_back(cmd);
@@ -161,6 +164,7 @@ void handle_command(std::string command, std::string command_args)
 }
 
 
+// Builtin function 'echo'.
 void function_echo(std::string command_args)
 {
     command_args = check_quotes(command_args);
@@ -212,6 +216,7 @@ void function_echo(std::string command_args)
 }
 
 
+// Builtin function 'type'.
 void function_type(std::string command_args)
 {
     if (std::find(builtin_commands.begin(), builtin_commands.end(), command_args) != builtin_commands.end()) {
@@ -230,12 +235,14 @@ void function_type(std::string command_args)
 }
 
 
+// Builtin function 'pwd'.
 void function_pwd()
 {
     std::cout << std::filesystem::current_path().string() << "\n";
 }
 
 
+// Builtin function 'cd'.
 void function_cd(std::string command_args)
 {
     const std::filesystem::path destination_path = command_args;
@@ -252,6 +259,7 @@ void function_cd(std::string command_args)
 }
 
 
+// Executes files in the path.
 void function_execute(std::string command, std::string command_args)
 {
     std::string path = get_path(command);
@@ -264,6 +272,7 @@ void function_execute(std::string command, std::string command_args)
 }
 
 
+// Returns the absolute path if the command was found
 std::string get_path(std::string command)
 {
     std::string path_env = std::getenv("PATH");
