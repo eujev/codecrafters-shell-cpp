@@ -100,7 +100,11 @@ bool handle_tab(std::string& input, bool double_tap)
                 auto const start_cmd = entry.path().string().find_last_of('/');
                 if (start_cmd != std::string::npos) {
                     std::string cmd = entry.path().string().substr(start_cmd+1);
-                    all_commands.push_back(cmd);
+                    // Try to remove the find and if condition for it 
+                    auto it = std::find(all_commands.begin(), all_commands.end(), cmd);
+                    if (it == all_commands.end()) {
+                        all_commands.push_back(cmd);
+                    }
                 }
             }
         }
@@ -110,12 +114,9 @@ bool handle_tab(std::string& input, bool double_tap)
     for (auto command : all_commands) {
         if (command.starts_with(input) == true) {
             ac_candidates.push_back(command);
-            //std::string to_add = command.substr(input.size()) + " ";
-            //input += to_add;
-            //std::cout << to_add;
-            //return;
         }
     }
+    std::sort(ac_candidates.begin(), ac_candidates.end());
     if (ac_candidates.empty()) {
         std::cout << '\a';
         return false;
@@ -131,7 +132,7 @@ bool handle_tab(std::string& input, bool double_tap)
         for (auto print_candidate : ac_candidates) {
             std::cout << print_candidate << "  ";
         }
-        std::cout << '\n' << input;
+        std::cout << '\n' << "$ " << input;
         return false;
     }
     else {
