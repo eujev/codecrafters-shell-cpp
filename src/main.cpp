@@ -78,10 +78,12 @@ void get_non_can_input(std::string& input)
                 input.pop_back();
                 std::cout << "\b \b";
             }
+            double_tap = false;
         }
         else if (c >= 32 && c < BACKSPACE_KEY) {
             std::cout << c;
             input += c;
+            double_tap = false;
         }
     }
     tcsetattr(STDIN_FILENO, TCSANOW, &old_termio);
