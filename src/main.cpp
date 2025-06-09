@@ -135,33 +135,14 @@ bool handle_tab(std::string& input, bool double_tap)
         return false;
     }
     else if (ac_candidates.size() > 1 && !double_tap) {
-    //     bool same_start = true;
         std::string prefix = get_longest_common_prefix(ac_candidates);
 
-    //    std::cout << " Prefix:" << prefix << "\n";
-    //    auto string_min = *std::min_element(ac_candidates.begin(), ac_candidates.end(), [] (const std::string& s1, const std::string& s2) {return s1.length() < s2.length();} );
-    //    std::cout << "String min length: " << string_min.length() << "\n";
         if (input.size() == prefix.size()) {
             return true;
         }
         std::string to_add = prefix.substr(input.size());
         input += to_add;
         std::cout << to_add;
-    //     int pos = input.size();
-    //     char check_to_add = ac_candidates.at(0).at(pos);
-    //     while (same_start && pos < string_min.size()) {
-    //         for (auto it = ac_candidates.begin(); it != ac_candidates.end(); ++it) {
-    //             if (it->at(pos) != check_to_add) {
-    //                 same_start = false;
-    //                 break;
-    //             }
-    //         }
-    //         if (same_start == false) {break;}
-    //         input += check_to_add;
-    //         std::cout << check_to_add;
-    //         ++pos;
-    //         check_to_add = ac_candidates.at(0).at(pos);
-    //     }
         return false;
     }
     else if (double_tap) {
