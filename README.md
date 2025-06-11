@@ -13,7 +13,7 @@ to try the challenge.
 - [x] **Built-in Commands**: Includes built-in commands like exit and cd. 
 - [x] **Basic Command Execution**: Run simple shell commands like ls, pwd, etc.
 - [x] **Input/Output Redirection**: Supports > and < for redirecting output/input to/from files.
-- [x] **Piping:** Supports piping commands with |, allowing you to chain multiple commands together.
+- [ ] **Piping:** Supports piping commands with |, allowing you to chain multiple commands together.
 - [x] **Quoting:** Preserves the literal value inside quotes.
 - [x] **Autocompletion:** Supports partial autocompletion
 - [ ] **History:** Keep track of the command history and allow users to navigate it.
