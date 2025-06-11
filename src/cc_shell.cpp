@@ -1,5 +1,6 @@
 #include "cc_shell.hpp"
 
+#include <cstddef>
 #include <termios.h>
 #include <unistd.h>
 #include <vector>
@@ -8,6 +9,7 @@
 #include <filesystem>
 #include <fstream>
 
+#include "parser.hpp"
 
 CC_Shell::CC_Shell() {
     path_env = std::getenv("PATH");
@@ -88,7 +90,7 @@ bool CC_Shell::handle_tab(std::string& input, bool double_tap) {
         return false;
     }
     else if (ac_candidates.size() > 1 && !double_tap) {
-        std::string prefix = get_longest_common_prefix(ac_candidates);
+        std::string prefix = Parser::get_longest_common_prefix(ac_candidates);
 
         if (input.size() == prefix.size()) {
             return true;
@@ -133,9 +135,9 @@ void CC_Shell::handle_command(std::string command, std::string command_args)
 
 
 // Builtin function 'echo'.
-void command_echo(std::string command_args)
+void CC_Shell::command_echo(std::string command_args)
 {
-    command_args = check_quotes(command_args);
+    command_args = Parser::check_quotes(command_args);
     auto it = command_args.find(">");
     if (it != command_args.npos) {
         if (command_args.at(it-1) == '1') {
