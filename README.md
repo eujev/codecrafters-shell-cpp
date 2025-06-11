@@ -1,34 +1,21 @@
 [![progress-banner](https://backend.codecrafters.io/progress/shell/ea8d2ef8-2763-44c2-b0dd-6f8c85b6cf8f)](https://app.codecrafters.io/users/codecrafters-bot?r=2qF)
 
-This is a starting point for C++ solutions to the
-["Build Your Own Shell" Challenge](https://app.codecrafters.io/courses/shell/overview).
-
-In this challenge, you'll build your own POSIX compliant shell that's capable of
-interpreting shell commands, running external programs and builtin commands like
-cd, pwd, echo and more. Along the way, you'll learn about shell command parsing,
-REPLs, builtin commands, and more.
+This repository contains my implementation of a basic shell as 
+part of the [codecrafters.io](https://codecrafters.io) course.
+The goal is to build a simple POSIX compliant shell that can execute commands, handle pipes,
+redirect input/output, and more, all while implementing fundamental shell functionalities.
 
 **Note**: If you're viewing this repo on GitHub, head over to
-[codecrafters.io](https://codecrafters.io) to try the challenge.
+["Build Your Own Shell" Challenge](https://app.codecrafters.io/courses/shell/overview)
+to try the challenge.
 
-# Passing the first stage
+# Features
+- [x] **Built-in Commands**: Includes built-in commands like exit and cd. 
+- [x] **Basic Command Execution**: Run simple shell commands like ls, pwd, etc.
+- [x] **Input/Output Redirection**: Supports > and < for redirecting output/input to/from files.
+- [x] **Piping:** Supports piping commands with |, allowing you to chain multiple commands together.
+- [x] **Quoting:** Preserves the literal value inside quotes.
+- [x] **Autocompletion:** Supports partial autocompletion
+- [ ] **History:** Keep track of the command history and allow users to navigate it.
+- [ ] **History Persistence:**
 
-The entry point for your `shell` implementation is in `src/main.cpp`. Study and
-uncomment the relevant code, and push your changes to pass the first stage:
-
-```sh
-git commit -am "pass 1st stage" # any msg
-git push origin master
-```
-
-Time to move on to the next stage!
-
-# Stage 2 & beyond
-
-Note: This section is for stages 2 and beyond.
-
-1. Ensure you have `cmake` installed locally
-1. Run `./your_program.sh` to run your program, which is implemented in
-   `src/main.cpp`.
-1. Commit your changes and run `git push origin master` to submit your solution
-   to CodeCrafters. Test output will be streamed to your terminal.
