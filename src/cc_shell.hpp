@@ -17,7 +17,7 @@ public:
 
 private:
   std::vector<std::string> builtin_commands{"echo", "type", "exit", "pwd",
-                                            "cd"};
+                                            "cd", "history"};
   std::string get_path(std::string command);
   std::string path_env;
 };
