@@ -1,6 +1,7 @@
 #include "cc_shell.hpp"
 
 #include <cstddef>
+#include <iostream>
 #include <termios.h>
 #include <unistd.h>
 #include <vector>
@@ -127,6 +128,9 @@ void CC_Shell::handle_command(std::string command, std::string command_args)
     }
     else if (command == "cd") {
         command_cd(command_args);
+    }
+    else if (command == "history") {
+        command_history();
     }
     else {
         command_execute(command, command_args);
@@ -256,4 +260,14 @@ std::string CC_Shell::get_path(std::string command)
         }
     }
     return "";
+}
+
+void CC_Shell::command_history() {
+    for (auto command : history) {
+         std::cout << command << "\n";
+    }
+}
+
+void CC_Shell::add_to_history(std::string &input) {
+    history.emplace_back(input);
 }

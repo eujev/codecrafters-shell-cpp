@@ -16,6 +16,7 @@ int main() {
         std::cout << "$ ";
         std::string input;
         shell.get_non_can_input(input);
+        shell.add_to_history(input);
         if (input == "exit 0") {
             return 0;
         }

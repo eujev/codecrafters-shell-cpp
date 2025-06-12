@@ -1,7 +1,7 @@
 #pragma once
 
-#include "iostream"
-#include "vector"
+#include <vector>
+#include <string>
 
 class CC_Shell {
 public:
@@ -14,10 +14,13 @@ public:
   void command_execute(std::string command, std::string command_args);
   void command_pwd();
   void command_cd(std::string command_args);
+  void command_history();
+  void add_to_history(std::string &input);
 
 private:
   std::vector<std::string> builtin_commands{"echo", "type", "exit", "pwd",
                                             "cd", "history"};
+  std::vector<std::string> history;
   std::string get_path(std::string command);
   std::string path_env;
 };
