@@ -49,3 +49,4 @@ build/
 build_local/
 vcpkg_installed
 .clangd
+.clang-format
