@@ -263,8 +263,9 @@ std::string CC_Shell::get_path(std::string command)
 }
 
 void CC_Shell::command_history() {
-    for (auto command : history) {
-         std::cout << command << "\n";
+    for (size_t idx = 1; auto command : history) {
+         std::cout << "    " << idx << "  " << command << "\n";
+         ++idx;
     }
 }
 
