@@ -5,14 +5,13 @@
 
 #include "cc_shell.hpp"
 
-
 int main() {
     // Flush after every std::cout / std:cerr
     CC_Shell shell;
     std::cout << std::unitbuf;
     std::cerr << std::unitbuf;
     // Uncomment this block to pass the first stage
-    while(true) {
+    while (true) {
         std::cout << "$ ";
         std::string input;
         shell.get_non_can_input(input);
@@ -23,7 +22,7 @@ int main() {
         int seperator{0};
         if (input.front() == '\'' || input.front() == '\"') {
             char c = input.front();
-            seperator = input.find(c, 1)+1;
+            seperator = input.find(c, 1) + 1;
         }
         else {
             seperator = input.find(" ");
@@ -32,7 +31,7 @@ int main() {
         if (command.front() == '\'' || command.front() == '\"') {
             command = "cat";
         }
-        std::string command_args = input.substr(seperator + 1, input.length()); 
+        std::string command_args = input.substr(seperator + 1, input.length());
         shell.handle_command(command, command_args);
     }
 }
