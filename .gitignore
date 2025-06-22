@@ -50,3 +50,7 @@ build_local/
 vcpkg_installed
 .clangd
 .clang-format
+.cache
+
+
+vcpkg-manifest-install.log
