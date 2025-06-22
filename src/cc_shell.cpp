@@ -4,6 +4,7 @@
 #include <unistd.h>
 
 #include <algorithm>
+#include <cctype>
 #include <cstddef>
 #include <filesystem>
 #include <fstream>
@@ -134,7 +135,7 @@ void CC_Shell::handle_command(std::string command, std::string command_args) {
         command_cd(command_args);
     }
     else if (command == "history") {
-        command_history();
+        command_history(command_args);
     }
     else {
         command_execute(command, command_args);
@@ -265,10 +266,29 @@ std::string CC_Shell::get_path(std::string command) {
     return "";
 }
 
-void CC_Shell::command_history() {
-    for (size_t idx = 1; auto command : history) {
-        std::cout << "    " << idx << "  " << command << "\n";
-        ++idx;
+bool isNumber(const std::string &str) {
+    return std::all_of(str.begin(), str.end(),
+                       [](unsigned char c) { return std::isdigit(c); });
+}
+
+bool isWhiteeSpace(const std::string &str) {
+    return std::all_of(str.begin(), str.end(),
+                       [](unsigned char c) { return std::isspace(c); });
+}
+
+void CC_Shell::command_history(std::string command_args) {
+    int x = -1;
+    if (!command_args.empty() && isNumber(command_args)) {
+        try {
+            x = std::stoi(command_args);
+        } catch (...) {
+            std::cerr << "history: invalid number\n";
+        }
+    }
+    int limit_n = (x == -1 || x > history.size()) ? history.size() : x;
+
+    for (size_t idx = history.size() - limit_n; idx < history.size(); ++idx) {
+        std::cout << "    " << idx + 1 << "  " << history.at(idx) << "\n";
     }
 }
 

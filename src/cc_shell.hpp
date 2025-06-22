@@ -14,7 +14,7 @@ class CC_Shell {
     void command_execute(std::string command, std::string command_args);
     void command_pwd();
     void command_cd(std::string command_args);
-    void command_history();
+    void command_history(std::string command_args);
     void add_to_history(std::string &input);
 
    private:
