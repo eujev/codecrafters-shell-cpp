@@ -14,9 +14,10 @@ int main() {
     // Uncomment this block to pass the first stage
     while (true) {
         //std::cout << "$ ";
-        std::string input;
-        input = readline("$ ");
+        char *buffer = readline("$ ");
         //shell.get_non_can_input(input);
+        std::string input(buffer);
+        free(buffer);
         if (!input.empty()) {
             shell.add_to_history(input);
         }
