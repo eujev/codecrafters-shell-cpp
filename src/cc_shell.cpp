@@ -14,6 +14,16 @@
 
 #include "parser.hpp"
 
+namespace {
+
+ bool is_executable(const std::filesystem::path& path) {
+    std::filesystem::perms permissions = std::filesystem::status(path).permissions();
+    return (permissions & (std::filesystem::perms::owner_exec | std::filesystem::perms::group_exec | std::filesystem::perms::others_exec)) != std::filesystem::perms::none;
+}
+
+}
+
+
 CC_Shell::CC_Shell() { path_env = std::getenv("PATH"); }
 
 // Changes the terminal mode, so that each individual character can be handled
@@ -259,12 +269,13 @@ std::string CC_Shell::get_path(std::string command) {
         std::getline(path_env_stream, path, ':');
         std::string abs_path = path + '/' + command;
 
-        if (std::filesystem::exists(abs_path)) {
+        if (std::filesystem::exists(abs_path) && is_executable(abs_path)) {
             return abs_path;
         }
     }
     return "";
 }
+
 
 bool isNumber(const std::string &str) {
     return std::all_of(str.begin(), str.end(),
