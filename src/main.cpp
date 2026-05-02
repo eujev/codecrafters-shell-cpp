@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <string>
+#include <readline/readline.h>
 
 #include "cc_shell.hpp"
 
@@ -12,10 +13,13 @@ int main() {
     std::cerr << std::unitbuf;
     // Uncomment this block to pass the first stage
     while (true) {
-        std::cout << "$ ";
+        //std::cout << "$ ";
         std::string input;
-        shell.get_non_can_input(input);
-        shell.add_to_history(input);
+        input = readline("$ ");
+        //shell.get_non_can_input(input);
+        if (!input.empty()) {
+            shell.add_to_history(input);
+        }
         if (input == "exit") {
             return 0;
         }

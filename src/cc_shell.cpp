@@ -35,6 +35,11 @@ void CC_Shell::get_non_can_input(std::string &input) {
     tcsetattr(STDIN_FILENO, TCSANOW, &new_termio);
 
     const char BACKSPACE_KEY = 127;
+    const char UP_ARROW = 72;
+    const char LEFT_ARROW = 75;
+    const char DOWN_ARROW = 80;
+    const char RIGHT_ARROW = 77;
+
     char c;
     bool double_tap{false};
     while (true) {
@@ -52,6 +57,12 @@ void CC_Shell::get_non_can_input(std::string &input) {
                 std::cout << "\b \b";
             }
             double_tap = false;
+        }
+        else if (c == UP_ARROW) {
+            std::cout << "UP\n";
+        }
+        else if (c == LEFT_ARROW) {
+            std::cout << "LEFT\n";
         }
         else if (c >= 32 && c < BACKSPACE_KEY) {
             std::cout << c;
