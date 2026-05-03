@@ -1,11 +1,13 @@
 #include "cc_shell.hpp"
 
+#include <readline/readline.h>
 #include <termios.h>
 #include <unistd.h>
 
 #include <algorithm>
 #include <cctype>
 #include <cstddef>
+#include <cstring>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -19,10 +21,39 @@ namespace {
  bool is_executable(const std::filesystem::path& path) {
     std::filesystem::perms permissions = std::filesystem::status(path).permissions();
     return (permissions & (std::filesystem::perms::owner_exec | std::filesystem::perms::group_exec | std::filesystem::perms::others_exec)) != std::filesystem::perms::none;
-}
 
 }
 
+}
+    std::vector<std::string> builtin_commands{"echo", "type", "exit",
+                                              "pwd",  "cd",   "history"};
+
+
+
+char *command_generator(const char* text, int state) {
+    static size_t list_index;
+    static size_t len;
+
+    if (state == 0) {
+        list_index = 0;
+        len = strlen(text);
+    }
+
+    while (list_index < builtin_commands.size()) {
+        const std::string& command = builtin_commands[list_index++];
+        if(command.compare(0, len, text) == 0) {
+            return strdup(command.c_str());
+        }
+    }
+    return nullptr;
+}
+
+char **custom_completer(const char* text, int start, int end) {
+    if (start == 0) {
+        return rl_completion_matches(text, command_generator);
+    }
+    return nullptr;
+}
 
 CC_Shell::CC_Shell() { path_env = std::getenv("PATH"); }
 

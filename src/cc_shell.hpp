@@ -3,6 +3,9 @@
 #include <string>
 #include <vector>
 
+char **custom_completer(const char* text, int start, int end);
+char *command_generator(const char* text, int state);
+
 class CC_Shell {
    public:
     CC_Shell();
@@ -18,8 +21,6 @@ class CC_Shell {
     void add_to_history(std::string &input);
 
    private:
-    std::vector<std::string> builtin_commands{"echo", "type", "exit",
-                                              "pwd",  "cd",   "history"};
     std::vector<std::string> history;
     std::string get_path(std::string command);
     std::string path_env;

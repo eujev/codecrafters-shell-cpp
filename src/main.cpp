@@ -11,11 +11,20 @@ int main() {
     CC_Shell shell;
     std::cout << std::unitbuf;
     std::cerr << std::unitbuf;
+
+    rl_attempted_completion_function = custom_completer;
     // Uncomment this block to pass the first stage
     while (true) {
+        // NOTE: Old style without the readline library
         //std::cout << "$ ";
-        char *buffer = readline("$ ");
         //shell.get_non_can_input(input);
+
+        char *buffer = readline("$ ");
+        if (buffer == nullptr) {
+            std::cout << "\n";
+            break;
+        }
+
         std::string input(buffer);
         free(buffer);
         if (!input.empty()) {
