@@ -1,5 +1,6 @@
 #include "cc_shell.hpp"
 
+#include <readline/history.h>
 #include <readline/readline.h>
 #include <termios.h>
 #include <unistd.h>
@@ -324,7 +325,8 @@ bool isWhiteeSpace(const std::string &str) {
 }
 
 void CC_Shell::command_history(std::string command_args) {
-    int x = -1;
+    int start = history_base;
+    int x{0};
     if (!command_args.empty() && isNumber(command_args)) {
         try {
             x = std::stoi(command_args);
@@ -332,10 +334,15 @@ void CC_Shell::command_history(std::string command_args) {
             std::cerr << "history: invalid number\n";
         }
     }
-    int limit_n = (x == -1 || x > history.size()) ? history.size() : x;
+    if (x > 0 && x < history_length) {
+        start = history_base + history_length - x;
+    }
 
-    for (size_t idx = history.size() - limit_n; idx < history.size(); ++idx) {
-        std::cout << "    " << idx + 1 << "  " << history.at(idx) << "\n";
+    for (int i = start; i < history_base + history_length; i++) {
+        HIST_ENTRY* entry = history_get(i);
+        if (entry != nullptr) {
+            std::cout << "    " << i << "  " << entry->line << "\n";
+        }
     }
 }
 

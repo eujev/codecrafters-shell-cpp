@@ -29,8 +29,8 @@ int main() {
         std::string input(buffer);
         free(buffer);
         if (!input.empty()) {
-            shell.add_to_history(input);
-            // add_history(input.c_str());
+            // shell.add_to_history(input);
+            add_history(input.c_str());
         }
         if (input == "exit") {
             return 0;
