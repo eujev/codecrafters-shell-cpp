@@ -12,7 +12,7 @@ int main() {
     std::cout << std::unitbuf;
     std::cerr << std::unitbuf;
 
-    rl_attempted_completion_function = custom_completer;
+    rl_attempted_completion_function = CC_Shell::custom_completer;
     // Uncomment this block to pass the first stage
     while (true) {
         // NOTE: Old style without the readline library

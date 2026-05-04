@@ -12,6 +12,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <system_error>
 #include <vector>
 
 #include "parser.hpp"
@@ -21,41 +22,48 @@ namespace {
  bool is_executable(const std::filesystem::path& path) {
     std::filesystem::perms permissions = std::filesystem::status(path).permissions();
     return (permissions & (std::filesystem::perms::owner_exec | std::filesystem::perms::group_exec | std::filesystem::perms::others_exec)) != std::filesystem::perms::none;
-
+  }
 }
 
-}
-    std::vector<std::string> builtin_commands{"echo", "type", "exit",
-                                              "pwd",  "cd",   "history"};
 
 
+// std::vector<std::string> CC_Shell::get_path_commands() {
+void CC_Shell::get_path_commands() {
+    all_commands = builtin_commands;
+    std::stringstream path_env_stream(path_env);
+    std::string path;
+    while (std::getline(path_env_stream, path, ':')) {
+        std::error_code ec;
 
-char *command_generator(const char* text, int state) {
-    static size_t list_index;
-    static size_t len;
-
-    if (state == 0) {
-        list_index = 0;
-        len = strlen(text);
-    }
-
-    while (list_index < builtin_commands.size()) {
-        const std::string& command = builtin_commands[list_index++];
-        if(command.compare(0, len, text) == 0) {
-            return strdup(command.c_str());
+        if (!std::filesystem::exists(path, ec) || !std::filesystem::is_directory(path, ec)) {
+            continue;
+        }
+        for (const auto &entry : std::filesystem::directory_iterator(path, ec)) {
+            if (ec) {
+                break;
+            }
+            if (entry.exists() && !entry.is_directory() &&
+                ((std::filesystem::perms::owner_exec & // TODO: Here I should be able to use the newly created function
+                  entry.status().permissions()) !=
+                 std::filesystem::perms::none)) {
+                auto const start_cmd = entry.path().string().find_last_of('/');
+                if (start_cmd != std::string::npos) {
+                    std::string cmd =
+                        entry.path().string().substr(start_cmd + 1);
+                    // TODO: Try to remove the find and if condition for 'it'
+                    // Maybe use set instead?
+                    auto it = std::find(all_commands.begin(),
+                                        all_commands.end(), cmd);
+                    if (it == all_commands.end()) {
+                        all_commands.push_back(cmd);
+                    }
+                }
+            }
         }
     }
-    return nullptr;
 }
 
-char **custom_completer(const char* text, int start, int end) {
-    if (start == 0) {
-        return rl_completion_matches(text, command_generator);
-    }
-    return nullptr;
-}
 
-CC_Shell::CC_Shell() { path_env = std::getenv("PATH"); }
 
 // Changes the terminal mode, so that each individual character can be handled
 void CC_Shell::get_non_can_input(std::string &input) {
