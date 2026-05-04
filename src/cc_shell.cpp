@@ -41,10 +41,7 @@ void CC_Shell::get_path_commands() {
             if (ec) {
                 break;
             }
-            if (entry.exists() && !entry.is_directory() &&
-                ((std::filesystem::perms::owner_exec & // TODO: Here I should be able to use the newly created function
-                  entry.status().permissions()) !=
-                 std::filesystem::perms::none)) {
+            if (entry.exists() && !entry.is_directory() && is_executable(entry.path())) {
                 auto const cmd = entry.path().filename().string();
                 all_commands.insert(cmd);
             }
