@@ -1,12 +1,12 @@
 #pragma once
 
 #include <cstring>
+#include <set>
 #include <string>
 #include <vector>
 #include <readline/readline.h>
+#include <readline/history.h>
 
-char **custom_completer(const char* text, int start, int end);
-char *command_generator(const char* text, int state);
 
 class CC_Shell {
    public:
@@ -40,7 +40,7 @@ class CC_Shell {
     std::string path_env;
     std::vector<std::string> builtin_commands{"echo", "type", "exit",
                                               "pwd",  "cd",   "history"};
-    std::vector<std::string> all_commands;
+    std::set<std::string> all_commands;
 
     static CC_Shell& get_Instance() {
         static CC_Shell instance;
@@ -49,17 +49,20 @@ class CC_Shell {
 
     static char *command_generator(const char* text, int state) {
         static size_t list_index;
+        static std::set<std::string>::iterator it;
         static size_t len;
-
-        if (state == 0) {
-            list_index = 0;
-            len = strlen(text);
-        }
 
         auto& cmd = get_Instance().all_commands;
 
-        while (list_index < cmd.size()) {
-            const std::string& command = cmd[list_index++];
+        if (state == 0) {
+            list_index = 0;
+            it = cmd.begin();
+            len = strlen(text);
+        }
+
+
+        while (it != cmd.end()) {
+            const std::string& command = *it++;
             if(command.compare(0, len, text) == 0) {
                 return strdup(command.c_str());
             }

@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <string>
+#include <readline/history.h>
 #include <readline/readline.h>
 
 #include "cc_shell.hpp"
@@ -29,6 +30,7 @@ int main() {
         free(buffer);
         if (!input.empty()) {
             shell.add_to_history(input);
+            // add_history(input.c_str());
         }
         if (input == "exit") {
             return 0;

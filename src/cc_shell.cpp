@@ -27,9 +27,8 @@ namespace {
 
 
 
-// std::vector<std::string> CC_Shell::get_path_commands() {
 void CC_Shell::get_path_commands() {
-    all_commands = builtin_commands;
+    all_commands.insert(builtin_commands.begin(), builtin_commands.end());
     std::stringstream path_env_stream(path_env);
     std::string path;
     while (std::getline(path_env_stream, path, ':')) {
@@ -46,18 +45,8 @@ void CC_Shell::get_path_commands() {
                 ((std::filesystem::perms::owner_exec & // TODO: Here I should be able to use the newly created function
                   entry.status().permissions()) !=
                  std::filesystem::perms::none)) {
-                auto const start_cmd = entry.path().string().find_last_of('/');
-                if (start_cmd != std::string::npos) {
-                    std::string cmd =
-                        entry.path().string().substr(start_cmd + 1);
-                    // TODO: Try to remove the find and if condition for 'it'
-                    // Maybe use set instead?
-                    auto it = std::find(all_commands.begin(),
-                                        all_commands.end(), cmd);
-                    if (it == all_commands.end()) {
-                        all_commands.push_back(cmd);
-                    }
-                }
+                auto const cmd = entry.path().filename().string();
+                all_commands.insert(cmd);
             }
         }
     }
