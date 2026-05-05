@@ -24,6 +24,16 @@ namespace {
     std::filesystem::perms permissions = std::filesystem::status(path).permissions();
     return (permissions & (std::filesystem::perms::owner_exec | std::filesystem::perms::group_exec | std::filesystem::perms::others_exec)) != std::filesystem::perms::none;
   }
+
+bool isNumber(const std::string &str) {
+    return std::all_of(str.begin(), str.end(),
+                       [](unsigned char c) { return std::isdigit(c); });
+}
+
+bool isWhiteeSpace(const std::string &str) {
+    return std::all_of(str.begin(), str.end(),
+                       [](unsigned char c) { return std::isspace(c); });
+}
 }
 
 
@@ -195,16 +205,6 @@ std::string CC_Shell::get_path(std::string command) {
     return "";
 }
 
-
-bool isNumber(const std::string &str) {
-    return std::all_of(str.begin(), str.end(),
-                       [](unsigned char c) { return std::isdigit(c); });
-}
-
-bool isWhiteeSpace(const std::string &str) {
-    return std::all_of(str.begin(), str.end(),
-                       [](unsigned char c) { return std::isspace(c); });
-}
 
 void CC_Shell::command_history(std::string command_args) {
     int start = history_base;

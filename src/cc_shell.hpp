@@ -24,7 +24,7 @@ class CC_Shell {
     void get_path_commands();
 
     static char **custom_completer(const char* text, int start, int end) {
-        rl_attempted_completion_over = 1;  // NOTE: Check again what this exactly does
+        rl_attempted_completion_over = 1;
         if (start == 0) {
             return rl_completion_matches(text, command_generator);
         }
