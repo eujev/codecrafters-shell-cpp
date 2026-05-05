@@ -1,9 +1,10 @@
+#include <readline/history.h>
+#include <readline/readline.h>
+
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
 #include <string>
-#include <readline/history.h>
-#include <readline/readline.h>
 
 #include "cc_shell.hpp"
 
@@ -17,10 +18,10 @@ int main() {
     // Uncomment this block to pass the first stage
     while (true) {
         // NOTE: Old style without the readline library
-        //std::cout << "$ ";
-        //shell.get_non_can_input(input);
+        // std::cout << "$ ";
+        // shell.get_non_can_input(input);
 
-        char *buffer = readline("$ ");
+        char* buffer = readline("$ ");
         if (buffer == nullptr) {
             std::cout << "\n";
             break;

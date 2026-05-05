@@ -1,12 +1,12 @@
 #pragma once
 
+#include <readline/history.h>
+#include <readline/readline.h>
+
 #include <cstring>
 #include <set>
 #include <string>
 #include <vector>
-#include <readline/readline.h>
-#include <readline/history.h>
-
 
 class CC_Shell {
    public:
@@ -14,6 +14,7 @@ class CC_Shell {
         path_env = std::getenv("PATH");
         get_path_commands();
     };
+
     void handle_command(std::string command, std::string command_args);
     void command_echo(std::string command_args);
     void command_type(std::string command_args);
@@ -23,7 +24,7 @@ class CC_Shell {
     void command_history(std::string command_args);
     void get_path_commands();
 
-    static char **custom_completer(const char* text, int start, int end) {
+    static char** custom_completer(const char* text, int start, int end) {
         rl_attempted_completion_over = 1;
         if (start == 0) {
             return rl_completion_matches(text, command_generator);
@@ -44,7 +45,7 @@ class CC_Shell {
         return instance;
     }
 
-    static char *command_generator(const char* text, int state) {
+    static char* command_generator(const char* text, int state) {
         static size_t list_index;
         static std::set<std::string>::iterator it;
         static size_t len;
@@ -57,14 +58,12 @@ class CC_Shell {
             len = strlen(text);
         }
 
-
         while (it != cmd.end()) {
             const std::string& command = *it++;
-            if(command.compare(0, len, text) == 0) {
+            if (command.compare(0, len, text) == 0) {
                 return strdup(command.c_str());
             }
         }
         return nullptr;
     }
-
 };

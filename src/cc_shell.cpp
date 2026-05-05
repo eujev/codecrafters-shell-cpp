@@ -20,22 +20,25 @@
 
 namespace {
 
- bool is_executable(const std::filesystem::path& path) {
-    std::filesystem::perms permissions = std::filesystem::status(path).permissions();
-    return (permissions & (std::filesystem::perms::owner_exec | std::filesystem::perms::group_exec | std::filesystem::perms::others_exec)) != std::filesystem::perms::none;
-  }
+bool is_executable(const std::filesystem::path& path) {
+    std::filesystem::perms permissions =
+        std::filesystem::status(path).permissions();
+    return (permissions & (std::filesystem::perms::owner_exec |
+                           std::filesystem::perms::group_exec |
+                           std::filesystem::perms::others_exec)) !=
+           std::filesystem::perms::none;
+}
 
-bool isNumber(const std::string &str) {
+bool isNumber(const std::string& str) {
     return std::all_of(str.begin(), str.end(),
                        [](unsigned char c) { return std::isdigit(c); });
 }
 
-bool isWhiteeSpace(const std::string &str) {
+bool isWhiteeSpace(const std::string& str) {
     return std::all_of(str.begin(), str.end(),
                        [](unsigned char c) { return std::isspace(c); });
 }
-}
-
+}  // namespace
 
 void CC_Shell::get_path_commands() {
     all_commands.insert(builtin_commands.begin(), builtin_commands.end());
@@ -44,21 +47,23 @@ void CC_Shell::get_path_commands() {
     while (std::getline(path_env_stream, path, ':')) {
         std::error_code ec;
 
-        if (!std::filesystem::exists(path, ec) || !std::filesystem::is_directory(path, ec)) {
+        if (!std::filesystem::exists(path, ec) ||
+            !std::filesystem::is_directory(path, ec)) {
             continue;
         }
-        for (const auto &entry : std::filesystem::directory_iterator(path, ec)) {
+        for (const auto& entry :
+             std::filesystem::directory_iterator(path, ec)) {
             if (ec) {
                 break;
             }
-            if (entry.exists() && !entry.is_directory() && is_executable(entry.path())) {
+            if (entry.exists() && !entry.is_directory() &&
+                is_executable(entry.path())) {
                 auto const cmd = entry.path().filename().string();
                 all_commands.insert(cmd);
             }
         }
     }
 }
-
 
 void CC_Shell::handle_command(std::string command, std::string command_args) {
     if (command == "echo") {
@@ -204,7 +209,6 @@ std::string CC_Shell::get_path(std::string command) {
     }
     return "";
 }
-
 
 void CC_Shell::command_history(std::string command_args) {
     int start = history_base;
