@@ -14,8 +14,6 @@ class CC_Shell {
         path_env = std::getenv("PATH");
         get_path_commands();
     };
-    void get_non_can_input(std::string &input);
-    bool handle_tab(std::string &input, bool double_tap);
     void handle_command(std::string command, std::string command_args);
     void command_echo(std::string command_args);
     void command_type(std::string command_args);
@@ -23,7 +21,6 @@ class CC_Shell {
     void command_pwd();
     void command_cd(std::string command_args);
     void command_history(std::string command_args);
-    void add_to_history(std::string &input);
     void get_path_commands();
 
     static char **custom_completer(const char* text, int start, int end) {

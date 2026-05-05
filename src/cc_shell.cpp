@@ -27,7 +27,6 @@ namespace {
 }
 
 
-
 void CC_Shell::get_path_commands() {
     all_commands.insert(builtin_commands.begin(), builtin_commands.end());
     std::stringstream path_env_stream(path_env);
@@ -50,123 +49,6 @@ void CC_Shell::get_path_commands() {
     }
 }
 
-
-
-// Changes the terminal mode, so that each individual character can be handled
-void CC_Shell::get_non_can_input(std::string &input) {
-    termios new_termio, old_termio;
-    tcgetattr(STDIN_FILENO, &old_termio);
-    new_termio = old_termio;
-    new_termio.c_lflag &= ~(ICANON | ECHO);
-    tcsetattr(STDIN_FILENO, TCSANOW, &new_termio);
-
-    const char BACKSPACE_KEY = 127;
-    const char UP_ARROW = 72;
-    const char LEFT_ARROW = 75;
-    const char DOWN_ARROW = 80;
-    const char RIGHT_ARROW = 77;
-
-    char c;
-    bool double_tap{false};
-    while (true) {
-        c = getchar();
-        if (c == '\n') {
-            std::cout << std::endl;
-            break;
-        }
-        else if (c == '\t') {
-            double_tap = handle_tab(input, double_tap);
-        }
-        else if (c == BACKSPACE_KEY) {
-            if (!input.empty()) {
-                input.pop_back();
-                std::cout << "\b \b";
-            }
-            double_tap = false;
-        }
-        else if (c == UP_ARROW) {
-            std::cout << "UP\n";
-        }
-        else if (c == LEFT_ARROW) {
-            std::cout << "LEFT\n";
-        }
-        else if (c >= 32 && c < BACKSPACE_KEY) {
-            std::cout << c;
-            input += c;
-            double_tap = false;
-        }
-    }
-    tcsetattr(STDIN_FILENO, TCSANOW, &old_termio);
-}
-
-// Handles the autocompletion when pressing <TAB>.
-// @return if it was double tapped.
-bool CC_Shell::handle_tab(std::string &input, bool double_tap) {
-    std::vector<std::string> all_commands{builtin_commands};
-    std::stringstream path_env_stream(path_env);
-    std::string path;
-    while (!path_env_stream.eof()) {
-        std::getline(path_env_stream, path, ':');
-        for (const auto &entry : std::filesystem::directory_iterator(path)) {
-            if (entry.exists() && !entry.is_directory() &&
-                ((std::filesystem::perms::owner_exec &
-                  entry.status().permissions()) !=
-                 std::filesystem::perms::none)) {
-                auto const start_cmd = entry.path().string().find_last_of('/');
-                if (start_cmd != std::string::npos) {
-                    std::string cmd =
-                        entry.path().string().substr(start_cmd + 1);
-                    // TODO: Try to remove the find and if condition for 'it'
-                    auto it = std::find(all_commands.begin(),
-                                        all_commands.end(), cmd);
-                    if (it == all_commands.end()) {
-                        all_commands.push_back(cmd);
-                    }
-                }
-            }
-        }
-    }
-
-    std::vector<std::string> ac_candidates;
-    for (auto command : all_commands) {
-        if (command.starts_with(input) == true) {
-            ac_candidates.push_back(command);
-        }
-    }
-    std::sort(ac_candidates.begin(), ac_candidates.end());
-    if (ac_candidates.empty()) {
-        std::cout << '\a';
-        return false;
-    }
-    else if (ac_candidates.size() == 1) {
-        std::string to_add = ac_candidates.at(0).substr(input.size()) + " ";
-        input += to_add;
-        std::cout << to_add;
-        return false;
-    }
-    else if (ac_candidates.size() > 1 && !double_tap) {
-        std::string prefix = Parser::get_longest_common_prefix(ac_candidates);
-
-        if (input.size() == prefix.size()) {
-            return true;
-        }
-        std::string to_add = prefix.substr(input.size());
-        input += to_add;
-        std::cout << to_add;
-        return false;
-    }
-    else if (double_tap) {
-        std::cout << '\a' << '\n';
-        for (auto print_candidate : ac_candidates) {
-            std::cout << print_candidate << "  ";
-        }
-        std::cout << '\n' << "$ " << input;
-        return false;
-    }
-    else {
-        return true;
-    }
-}
 
 void CC_Shell::handle_command(std::string command, std::string command_args) {
     if (command == "echo") {
@@ -344,8 +226,4 @@ void CC_Shell::command_history(std::string command_args) {
             std::cout << "    " << i << "  " << entry->line << "\n";
         }
     }
-}
-
-void CC_Shell::add_to_history(std::string &input) {
-    history.emplace_back(input);
 }
