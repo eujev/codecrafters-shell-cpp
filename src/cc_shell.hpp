@@ -29,6 +29,13 @@ class CC_Shell {
         if (start == 0) {
             return rl_completion_matches(text, command_generator);
         }
+        else {
+            rl_attempted_completion_over = 0;
+            return nullptr;
+        }
+
+        // NOTE: Check if this is needed
+        rl_attempted_completion_over = 1;
         return nullptr;
     }
 
