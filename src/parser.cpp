@@ -8,7 +8,7 @@ std::string Parser::get_longest_common_prefix(
         return "";
     }
     auto string_min =
-        *std::min_element(commands.begin(), commands.end(),
+        *std::ranges::min_element(commands,
                           [](const std::string& s1, const std::string& s2) {
                               return s1.length() < s2.length();
                           });
