@@ -30,12 +30,12 @@ bool is_executable(const std::filesystem::path& path) {
 }
 
 bool isNumber(const std::string& str) {
-    return std::all_of(str.begin(), str.end(),
+    return std::ranges::all_of(str,
                        [](unsigned char c) { return std::isdigit(c); });
 }
 
 bool isWhiteeSpace(const std::string& str) {
-    return std::all_of(str.begin(), str.end(),
+    return std::ranges::all_of(str,
                        [](unsigned char c) { return std::isspace(c); });
 }
 }  // namespace
@@ -89,7 +89,7 @@ void CC_Shell::handle_command(std::string command, std::string command_args) {
 // Builtin function 'echo'.
 void CC_Shell::command_echo(std::string command_args) {
     command_args = Parser::check_quotes(command_args);
-    auto it = command_args.find(">");
+    auto it = command_args.find('>');
     if (it != command_args.npos) {
         if (command_args.at(it - 1) == '1') {
             if (command_args.at(it + 1) == '>') {
@@ -147,7 +147,7 @@ void CC_Shell::command_echo(std::string command_args) {
 
 // Builtin function 'type'.
 void CC_Shell::command_type(std::string command_args) {
-    if (std::find(builtin_commands.begin(), builtin_commands.end(),
+    if (std::ranges::find(builtin_commands,
                   command_args) != builtin_commands.end()) {
         std::cout << command_args << " is a shell builtin\n";
         return;
