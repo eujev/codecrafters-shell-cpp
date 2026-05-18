@@ -15,7 +15,9 @@ to try the challenge.
 - [x] **Input/Output Redirection**: Supports > and < for redirecting output/input to/from files.
 - [ ] **Piping:** Supports piping commands with |, allowing you to chain multiple commands together.
 - [x] **Quoting:** Preserves the literal value inside quotes.
-- [x] **Autocompletion:** Supports partial autocompletion
-- [ ] **History:** Keep track of the command history and allow users to navigate it.
+- [x] **Command Completion:** Supports command autocompletion
+- [ ] **Filename Completion** Supports completion of files and directories
+- [x] **History:** Keep track of the command history and allow users to navigate it.
 - [ ] **History Persistence:**
+- [ ] **Background Jobs**
 
